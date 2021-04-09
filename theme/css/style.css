@@ -66,13 +66,6 @@ footer {
     color : #ababab ; 
     line-height: 1.2em ;
     font-size : 80% ;
-}
-
-footer {
-    font-family: helvetica neue, helvetica, sans-serif ; 
-    color : #ababab ; 
-    line-height: 1.2em ;
-    font-size : 80% ;
     margin-top : 0.2em ;
     margin-bottom : 0.2em ;
 }
@@ -91,7 +84,7 @@ footer {
 #banner p {
     position : absolute ;
     top :32px ;
-    left : 20px ;
+    left : 140px ;
 }
 
 #banner img {
