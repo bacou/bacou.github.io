@@ -10,11 +10,23 @@ body {
     color : #404040 ;
     line-height: 1.4em;
     background-color : white ;
-    width : 80% ;
+    width : 90% ;
     max-width: 900px ;
-    padding : 2em 4em 2em 4em ;
-    margin : 1em auto ;
+    padding : 40px 60px ;
+    margin : auto ;
     display : block ;
+}
+
+@media (max-width: 960px) and (min-width: 480px) {
+    body {
+        padding : 20px 30px ;
+    }
+}
+
+@media (max-width: 480px) {
+    body {
+        padding : 10px 15px ;
+    }
 }
 
 img {
@@ -23,13 +35,13 @@ img {
 }
 
 a {
-    color : #337ab7 ; /*#595959*/
+    color : #337ab7 ;
     line-height: inherit ;
     font-size : inherit ;
 }
 
 a:hover {
-    color : #296292 ; /* #404040 ; */
+    color : #296292 ;
 }
 
 h1 a {
@@ -74,10 +86,11 @@ h1 a {
 
 #menu ul {
     padding : 0 ;
+    margin : 0 ;
 }
 
 #menu li {
-    display : inline ;
+    display : inline-block ;
     padding : 1em ;
     text-transform : uppercase ;
 }
@@ -111,13 +124,13 @@ h1 a {
 }
 
 #post-list li {
-    margin-bottom : 3em ;
-    padding-bottom: 2em ;
+    margin-bottom : 30px ;
+    padding-bottom: 30px ;
     border-bottom : 1px solid #ededed ;
 }
 
 #post-list li:last-child {
-    padding-bottom: 0em ;
+    padding-bottom: 0px ;
     border-bottom : none ;
 }
 
@@ -130,7 +143,7 @@ h2 {
 }
 
 article.hentry h3 {
-    margin : 0em ;
+    margin : 0px ;
 }
 
 h2 a {
@@ -149,12 +162,12 @@ h2 a:hover, article.hentry h3 a:hover {
 }
 
 article.hentry div.entry-content p {
-    margin-top: 12px ;
-    margin-bottom: 0em ;
+    margin-top: 5px ;
+    margin-bottom: 0px ;
 }
 
 .post-info{
-    margin-top: 12px ;
+    margin-top: 5px ;
     color : #ababab ;
     font-size : 80% ;
 }
@@ -184,5 +197,5 @@ div.input_area {
 }
 
 #contentinfo p {
-    margin : 0em ;
+    margin : 0px ;
 }
