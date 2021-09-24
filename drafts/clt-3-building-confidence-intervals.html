@@ -1163,7 +1163,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
  .highlight pre  .il { color: #666666 } /* Literal.Number.Integer.Long */</style><div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p><a href="./clt-1-sampling-distribution-of-the-mean">In this article</a> we saw that the sampling distribution of the mean is normally distributed around the population mean, as established by the Central Limit Theorem. We use this property to estimate the population mean using only a single sample. We will see now how we can do and visualize this.</p>
+<p><a href="./clt-1-sampling-distribution-of-the-mean">In this article</a> we saw that the sampling distribution of the mean is normally distributed around the population mean, as established by the Central Limit Theorem. We use this property to estimate the population mean using only a single sample. We will see now how we can do and visualize this estimation.</p>
 
 </div>
 </div>
@@ -1303,7 +1303,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Now we will collect multiple samples, and this time we will save both their <em>means</em> and <em>standard deviations</em>.</p>
-<p><strong>Note</strong>: In order to use the <em>sample standard deviation</em> as an estimator of the <em>population standard deviation</em>, we need it to be unbiased. This require to divide by n−1 rather than n. In the numpy implementation of the formula, we use the parameter <code>ddof</code> for delta degrees of freedom set to 1. More on the n-1 <a href="https://en.wikipedia.org/wiki/Unbiased_estimation_of_standard_deviation#Results_for_the_normal_distribution">here</a>.</p>
+<p><strong>Note</strong>: In order to use the <em>sample standard deviation</em> as an estimator of the <em>population standard deviation</em>, we need it to be unbiased. This require to divide by n−1 rather than n. In the code implementation of the formula, we use the parameter <code>ddof</code> for delta degrees of freedom set to 1. More on the n-1 <a href="https://en.wikipedia.org/wiki/Unbiased_estimation_of_standard_deviation#Results_for_the_normal_distribution">here</a>.</p>
 
 </div>
 </div>
@@ -1513,11 +1513,11 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Nice, with such a small difference, we can say that the <em>standard deviations of sample means</em> is equal to the <em>population standard deviation</em> divided by the <em>square root of the sample size</em>. Now we can go back to our estimation exercise.</p>
-<h3 id="Estimating-the-population-mean">Estimating the population mean<a class="anchor-link" href="#Estimating-the-population-mean">&#182;</a></h3><h4 id="Point-estimation">Point estimation<a class="anchor-link" href="#Point-estimation">&#182;</a></h4><p>The first estimation of the population mean we can do is to directly use the mean of our <em>unique sample</em>. It is called a point estimation. Of course the best case would be to find the mean of our <em>sampling distribution of means</em> but in practice we can rarely afford to take multiple samples. Using the fact the <em>sampling distribution of means</em> is normally distributed, we can do better than a point estimation.</p>
-<h4 id="Building-an-interval">Building an interval<a class="anchor-link" href="#Building-an-interval">&#182;</a></h4><p>Using a single sample and the fact that the sampling distribution of means is normally distributed, we can build a value interval for the population mean. That brings us to an usefull property of all normal distributions: 95.45% of the (normally distributed) values lay within the 2 first standard deviations around the mean.</p>
-<p>The "2" is called a z-value (more on this <a href="https://en.wikipedia.org/wiki/Standard_score">here</a>). It changes depending of the percentage of values we want to find. (A z-value of "1" gives 68.27%, a z-value of "3" gives 99.73%.) Applied to our situation, it means that 95.45% of our <em>sample means</em> lay within the 2 first <em>standard error of the mean</em> around the <em>mean of the sample means</em> (equal to the <em>population mean</em>).</p>
-<p>Let us color all the means within that range and see what it gives. The central bin will be in orange and all the bins inside the range will be colored in light orange.</p>
+<p>Nice, with no difference (or almost no difference), we can say that the <em>standard deviations of sample means</em> is equal to the <em>population standard deviation</em> divided by the <em>square root of the sample size</em>. Now we can go back to our estimation exercise.</p>
+<h3 id="Estimating-the-population-mean">Estimating the population mean<a class="anchor-link" href="#Estimating-the-population-mean">&#182;</a></h3><h4 id="Point-estimation">Point estimation<a class="anchor-link" href="#Point-estimation">&#182;</a></h4><p>The first estimation of the population mean we can do is to directly use the mean of our <em>unique sample</em>. It is called a point estimation. Of course the best case would be to find the mean of our <em>sampling distribution of means</em> but in practice we can rarely afford to take multiple samples. Using the fact that the <em>sampling distribution of means</em> is normally distributed, we can do better than a point estimation.</p>
+<h4 id="Building-an-interval">Building an interval<a class="anchor-link" href="#Building-an-interval">&#182;</a></h4><p>Using a single sample and the fact that the sampling distribution of means is normally distributed, we can build a value interval for the population mean. That brings us to a usefull property of all normal distributions: 95.45% of the (normally distributed) values lay within the 2 first standard deviations around the mean.</p>
+<p>The "2" is called a z-value (more on this <a href="https://en.wikipedia.org/wiki/Standard_score">here</a>). It changes depending on the percentage of values we want to find. (A z-value of "1" gives 68.27%, a z-value of "3" gives 99.73%.) Applied to our situation, it means that 95.45% of our <em>sample means</em> lay within the 2 first <em>standard error of the mean</em> around the <em>mean of the sample means</em> (equal to the <em>population mean</em>).</p>
+<p>Let us color all the means within that range and see what we get. The central bin will be in orange and all the bins inside the range will be colored in light orange.</p>
 
 </div>
 </div>
@@ -1685,13 +1685,33 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>This is close enough from the 95.45% we were looking for. This range is a called a <em>probability interval</em>. It can be defined as follow:</p>
+<p>This is close enough to the 95.45% we were looking for. This range is called a <em>probability interval</em>. It can be defined as follows:</p>
+<p><strong>If we draw a new sample, we have 95.45% chances that its mean will be inside this interval.</strong></p>
+<p>Or</p>
+<p><strong>95.45% of our sample means are inside this interval.</strong></p>
+<h3 id="How-does-that-help-estimating-the-population-mean?">How does that help estimating the population mean?<a class="anchor-link" href="#How-does-that-help-estimating-the-population-mean?">&#182;</a></h3><h4 id="Using-an-interval-instead-of-a-point-estimation">Using an interval instead of a point estimation<a class="anchor-link" href="#Using-an-interval-instead-of-a-point-estimation">&#182;</a></h4><p>With a unique sample mean, we have a point estimation of the population mean. This has a strong limitation: it is likely this point estimation is not strictly equal to the population mean, and we don't know how far we are. We could be anywhere inside the <em>sampling distribution of means</em>. In order to get a better estimation of where the <em>population mean</em> truly lies, we want to create a value interval around that <em>sample mean</em> where we believe it is likely to find the said population mean.</p>
+<blockquote><p>The idea is the following, let us say we have a sample of 5 observations for which we measured the size. The sample mean ends up being 180cm. Talking about humans, the tallest ones could be around 2m and the smallest ones around 150cm, so adding 1 observation to our sample would not drastically change its mean. In comparison, talking about trees, the tallest ones could easily go up to 50m, massively impacting our mean of 180cm ! This is why a value interval helps us get a better idea of what we are talking about.</p>
+</blockquote>
+<h4 id="Back-to-our-estimation-of-the-population-mean">Back to our estimation of the population mean<a class="anchor-link" href="#Back-to-our-estimation-of-the-population-mean">&#182;</a></h4><p>So, with a single sample, we cannot be 100% sure that the population mean is in the vicinity. Each individual sample will have its own value interval and the sample mean could be an oultier, with a mean quite far from the population mean (e.g. a sample in the blue parts of the previous graph). For that reason, we need to create an interval that will work for <em>most</em> of the samples. This interval is called a <em>confidence interval</em> and is defined as follow:</p>
+<p><strong>95.45% of (all) confidence intervals include the population mean.</strong></p>
+<p>Our <em>confidence interval</em> works if 95.45% of the <em>confidence intervals</em> built around each <em>sample mean</em> include the <em>population mean</em>.</p>
+<p>To build that interval, we are going to copy what we did with the <em>probability interval</em>. Starting from the <em>probability interval</em> formula, we replace the <em>population mean</em> by the <em>single sample mean</em>. For now, let us say we know the standard error of the mean, so the formula we want to try is:</p>
+<p><strong>95.45% confidence interval = sample mean +/- (2x standard error of the mean)</strong></p>
+<p>In order to visualize that, we will start by creating a confidence interval around a first sample mean selected in the middle of the right side of the sampling distribution of mean.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
+</div><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>This is close enough to the 95.45% we were looking for. This range is called a <em>probability interval</em>. It can be defined as follows:</p>
 <p><strong>If we draw a new sample, we have 95.45% chances that its mean will be inside this interval.</strong></p>
 <p>Or</p>
 <p><strong>95.45% of our sample means are inside this interval.</strong></p>
 <h3 id="How-does-that-help-estimating-the-population-mean?">How does that help estimating the population mean?<a class="anchor-link" href="#How-does-that-help-estimating-the-population-mean?">&#182;</a></h3><p>We are going to copy what we did with the <em>probability interval</em> to build a <em>confidence interval</em> defined as follow:</p>
 <p><strong>95.45% of our confidence intervals include the population mean.</strong></p>
-<p>Let us try and reverse the formula of the <em>95.45% probability interval</em> to get our <em>95.45% confidence interval</em>. The closest thing we have from the <code>population_mean</code> is our <code>single_sample_mean</code>, so we will start with that one. Our confidence interval works if 95.45% of our confidence intervals include the population mean.</p>
+<p>Let us try and reverse the formula of the <em>95.45% probability interval</em> to get our <em>95.45% confidence interval</em>. The closest thing we have to the <code>population_mean</code> is our <code>single_sample_mean</code>, so we will start with that one. Our confidence interval works if 95.45% of our confidence intervals include the population mean.</p>
 <p>For now, let us say we know the standard error of the mean, so the formula we want to try is:</p>
 <p><strong>95.45% confidence interval = sample mean +/- (2x standard error of the mean)</strong></p>
 <p>In order to visualize that, we will start by creating confidence intervals around a first sample mean selected in the middle of the right side of the sampling distribution of mean.</p>
@@ -1889,7 +1909,7 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Alright, so approximatively 95.45% of our intervals (<code>sample mean +/- 2* standard error of the mean</code>) include the population mean. In practive we usually don't know the <em>standard error of the mean</em>, so we need to estimate it from our sample in order to build an actual confidence interval.</p>
-<h4 id="Estimating-the-standard-error-of-the-mean">Estimating the standard error of the mean<a class="anchor-link" href="#Estimating-the-standard-error-of-the-mean">&#182;</a></h4><p>Could we estimate the <em>standard error of the mean</em> with the <em>sample standard deviation divided by the square root of the sample size</em>?</p>
+<h4 id="Estimating-the-standard-error-of-the-mean">Estimating the standard error of the mean<a class="anchor-link" href="#Estimating-the-standard-error-of-the-mean">&#182;</a></h4><p>Can we estimate the <em>standard error of the mean</em> with the <em>sample standard deviation divided by the square root of the sample size</em>?</p>
 <p>That would give us:</p>
 <p><strong>Estimated SEM = (sample standard deviation) / (square root of sample size)</strong></p>
 <p><strong>95.45% confidence interval = (sample mean) +/- (2x estimated SEM)</strong></p>
@@ -1987,8 +2007,8 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 <div class="cell border-box-sizing text_cell rendered"><div class="prompt input_prompt">
 </div><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Here the difference is striking ! While previously the range did not include the population mean, here it deffinitively does. This sample confidence interval expends even more on the left than the first sample, while being far more on the right.</p>
-<p>Some samples will have a small standard deviation while other will have a bigger one. Lets compute how many of those ranges include the population mean in total.</p>
+<p>Here the difference is striking ! While previously the range did not include the population mean, here it deffinitively does. This sample confidence interval extends even more on the left than the first sample, while being far more on the right.</p>
+<p>Some samples will have a small standard deviation while others will have a bigger one. Lets compute how many of those ranges include the population mean in total.</p>
 
 </div>
 </div>
