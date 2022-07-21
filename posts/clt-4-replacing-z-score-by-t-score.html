@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+          <link rel="stylesheet" type="text/css" href="/theme/css/style.css" />
+        <title>bacou.github.io - Replacing z-scores by t-scores with pandas and matplotlib</title>
+        <meta charset="utf-8" />
+        <meta name="generator" content="Pelican" />
+
+
+
+
+    <meta name="tags" content="stats" />
+    <meta name="tags" content="python" />
+
+</head>
+
+<body id="index" class="home">
+        <header id="banner" class="body">
+            <img id="maba" src="/images/blanc_fibonacci.png" alt="blanc" width="360"/>
+            <h1><a href="/">bacou.github.io</a></h1>
+            <p></p>
+        </header><!-- /#banner -->
+
+        <nav id="menu"><ul>
+            <li>
+                <a href="/">Accueil</a></li>
+            <li>
+                <a href="/tags.html">Libellés</a></li>
+            <li>
+                <a href="/pages/a-propos.html">À propos</a></li>
+        </ul></nav><!-- /#menu -->
+
+<section id="content" class="body">
+  <header>
+    <h2 class="entry-title">
+      <a href="/posts/clt-4-replacing-z-score-by-t-score.html" rel="bookmark"
+         title="Permalink to Replacing z-scores by t-scores with pandas and matplotlib">Replacing z-scores by t-scores with pandas and matplotlib</a></h2>
+ 
+  </header>
+  <footer class="post-info">
+    <time class="published" datetime="2021-09-07T00:00:00+02:00">
+      07/09/2021
+    </time>
+<!--         <div class="category">
+        Catégorie :
+        <a href="/category/misc.html">misc</a>
+    </div>
+ -->
+    <div class="tags">
+        <!-- Libellés : -->
+            <a href="/tag/stats.html">stats</a>
+            <a href="/tag/python.html">python</a>
+    </div>
+  </footer><!-- /.post-info -->
+  <div class="entry-content">
+    <p><a href="./clt-3-building-confidence-intervals">In this article</a> we saw how to build a confidence interval around a sample mean to make an estimation of the population mean. We noticed that, for small samples, our confidence intervals do not seem to work anymore. For that reason the z-score we used is replaced by a t-score.</p>
+<p><strong>What was the z-score again?</strong> The z-score, z-value or <a href="https://en.wikipedia.org/wiki/Standard_score">standard score</a> is the number of standard deviation between an observation and the mean, in the case of a normal distribution. For example, we can use it the say that 95.45% of the values lay within the 2 first standard deviations around the mean. In that case the "2" is a z-score. In the same context, a z-score of "1" gives 68.27% of the observations, a z-score of "3" gives 99.73%.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">matplotlib.ticker</span> <span class="k">as</span> <span class="nn">mticker</span>
+<span class="kn">import</span> <span class="nn">matplotlib.patches</span> <span class="k">as</span> <span class="nn">patches</span>
+</code></pre></div>
+
+<p>As always we will start by creating a population of 100,000 observations, but this time we will use a normal one. This will make our sampling distribution of the mean more normal and allow us to emphasize the details we want to see.</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">generate_rand_normal</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+    <span class="n">mean</span><span class="p">,</span> <span class="n">std_dev</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">3</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">mean</span><span class="p">,</span> <span class="n">std_dev</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">s</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="n">normal_population_size</span> <span class="o">=</span> <span class="mi">100000</span>
+<span class="n">normal_population</span> <span class="o">=</span> <span class="n">generate_rand_normal</span><span class="p">(</span><span class="n">normal_population_size</span><span class="p">)</span>
+<span class="n">normal_population_mean</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">normal_population</span><span class="p">)</span>
+<span class="n">normal_population_std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">normal_population</span><span class="p">)</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">plot_population_distribution</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+    <span class="c1"># plotting the distribution and its mean</span>
+    <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+
+    <span class="c1"># the weights are used to display percentages of samples</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="n">weights_pc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.</span><span class="p">]</span><span class="o">*</span><span class="n">n</span><span class="p">)</span> <span class="o">/</span> <span class="n">n</span>
+
+    <span class="c1"># adding the histogram</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">weights_pc</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;tab:purple&quot;</span><span class="p">)</span>
+
+    <span class="n">ax</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span>
+        <span class="n">data</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span> 
+        <span class="n">color</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;solid&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> 
+        <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Population mean = </span><span class="si">{:.3f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
+    <span class="p">)</span>
+
+    <span class="c1"># formatting</span>
+    <span class="n">y_ticks_loc</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_yticks</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">set_major_locator</span><span class="p">(</span><span class="n">mticker</span><span class="o">.</span><span class="n">FixedLocator</span><span class="p">(</span><span class="n">y_ticks_loc</span><span class="p">))</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_yticklabels</span><span class="p">([</span><span class="s2">&quot;</span><span class="si">{:,.1%}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">y_ticks_loc</span><span class="p">])</span>
+
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="mi">0</span><span class="p">))</span>
+
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Percentage of observations&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Value&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;upper right&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">fig</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="n">fig_normal_distribution</span> <span class="o">=</span> <span class="n">plot_population_distribution</span><span class="p">(</span><span class="n">normal_population</span><span class="p">)</span>
+</code></pre></div>
+
+<p><img alt="png" src="/images/CLT_4_replacing_z-score_by_t-score_6_0.png"></p>
+<p>We have a nice normal population. Now we will collect multiple samples, and save their <em>means</em> and <em>standard deviations</em>. We will start with large samples before going for our problematic small samples.</p>
+<p><strong>Note</strong>: In order to use the <em>sample standard deviation</em> as an estimator of the <em>population standard deviation</em>, we need it to be unbiased. This require to divide by n−1 rather than n. In the code implementation of the formula, we use the parameter <code>ddof</code> for delta degrees of freedom set to 1. More on the n-1 <a href="https://en.wikipedia.org/wiki/Unbiased_estimation_of_standard_deviation#Results_for_the_normal_distribution">here</a>.</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">compute_sample_means</span><span class="p">(</span><span class="n">population</span><span class="p">,</span> <span class="n">sample_n</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">):</span>
+
+    <span class="n">sampling_rows</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">):</span>
+        <span class="n">sample</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">population</span><span class="p">,</span> <span class="n">sample_n</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">sample_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;mean&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">sample</span><span class="p">),</span> <span class="s2">&quot;std&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="n">ddof</span><span class="o">=</span><span class="mi">1</span><span class="p">)}</span>
+        <span class="n">sampling_rows</span> <span class="o">=</span> <span class="p">[</span><span class="o">*</span><span class="n">sampling_rows</span><span class="p">,</span> <span class="n">sample_dict</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">sampling_rows</span><span class="p">)</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="n">number_of_samples</span> <span class="o">=</span> <span class="mi">10000</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="n">large_sample_size</span> <span class="o">=</span> <span class="mi">1000</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="n">large_sample_means</span> <span class="o">=</span> <span class="n">compute_sample_means</span><span class="p">(</span>
+    <span class="n">population</span><span class="o">=</span><span class="n">normal_population</span><span class="p">,</span>
+    <span class="n">sample_n</span><span class="o">=</span><span class="n">large_sample_size</span><span class="p">,</span>
+    <span class="n">n_samples</span><span class="o">=</span><span class="n">number_of_samples</span><span class="p">,</span>
+<span class="p">)</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">plot_sample_means_distribution</span><span class="p">(</span>
+    <span class="n">means</span><span class="p">,</span> <span class="n">pop_mean</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="n">xlim</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ylim</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+    <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="n">figsize</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">means</span><span class="p">,</span> <span class="n">bins</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">means</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;g&quot;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;dashed&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Mean of sample means = </span><span class="si">{:.3f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">means</span><span class="p">))</span>
+    <span class="p">)</span>
+
+    <span class="c1"># formatting </span>
+    <span class="k">if</span> <span class="n">xlim</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">xlim</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Average value of samples&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">ylim</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="n">ylim</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Number of samples&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;upper right&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">fig</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="n">fig_large_sample_means</span> <span class="o">=</span> <span class="n">plot_sample_means_distribution</span><span class="p">(</span>
+    <span class="n">large_sample_means</span><span class="p">[</span><span class="s2">&quot;mean&quot;</span><span class="p">],</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">normal_population</span><span class="p">),</span>
+<span class="p">)</span>
+</code></pre></div>
+
+<p><img alt="png" src="/images/CLT_4_replacing_z-score_by_t-score_13_0.png"></p>
+<p>The sampling distribution of means looks normally distributed - bell shaped - and centered around the population mean, as expected.</p>
+<h3>The standard normal distribution</h3>
+<p>Any normal distribution can be transformed into a <em>standard normal distribution</em> using a simple transformation. To each observation of the distribution, we substract the <em>mean of the distribution</em> and divide the result by the <em>standard deviation of the distribution</em>. This is called standardization and the resulting distribution is a normal distribution with a mean of 0 and a standard deviation of 1.</p>
+<p>In our case we can create the standard normal distribution of <em>the sampling distribution of means</em> by substracting the <em>mean of the population</em> (equal to the mean of the sample means) and divide the result by the <em>standard error of the mean</em> (equal to the population standard deviation divided by the square root of the sample size).</p>
+<div class="highlight"><pre><span></span><code><span class="n">large_sample_means</span><span class="p">[</span><span class="s2">&quot;z-score&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="p">(</span><span class="n">large_sample_means</span><span class="p">[</span><span class="s2">&quot;mean&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">normal_population_mean</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">normal_population_std</span> <span class="o">/</span> <span class="p">(</span><span class="n">large_sample_size</span><span class="o">**</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mi">2</span><span class="p">)))</span>
+<span class="p">)</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="n">fig_stdz_large_sample_means</span> <span class="o">=</span> <span class="n">plot_sample_means_distribution</span><span class="p">(</span>
+    <span class="n">large_sample_means</span><span class="p">[</span><span class="s2">&quot;z-score&quot;</span><span class="p">],</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">normal_population</span><span class="p">),</span>
+<span class="p">)</span>
+</code></pre></div>
+
+<p><img alt="png" src="/images/CLT_4_replacing_z-score_by_t-score_16_0.png"></p>
+<p>This distribution is the same as the one before, only the values on the X-axis have changed. This distribution gives us the z-scores directly. From 2 to -2, we will find 95.45% of the observations. Let us try with by highlighting the range on the graph.</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">plot_distribution_with_range</span><span class="p">(</span>
+    <span class="n">data</span><span class="p">,</span> <span class="n">selected_center</span><span class="p">,</span> <span class="n">selected_range</span><span class="p">,</span> 
+    <span class="n">bins</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="n">xlim</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ylim</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+    <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="n">figsize</span><span class="p">)</span>
+
+    <span class="c1"># distribution histogram</span>
+    <span class="n">bins_n</span><span class="p">,</span> <span class="n">bins_val</span><span class="p">,</span> <span class="n">rectangles</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">bins</span><span class="p">)</span>
+
+    <span class="c1"># distribution mean</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;g&quot;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;dashed&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Mean of sample means = </span><span class="si">{:.3f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">data</span><span class="p">)))</span>
+
+    <span class="c1"># finding the bin of our selected center</span>
+    <span class="n">central_bin</span> <span class="o">=</span> <span class="n">bins_val</span><span class="p">[</span><span class="n">bins_val</span> <span class="o">&lt;</span> <span class="n">selected_center</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+    <span class="n">central_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">bins_val</span> <span class="o">==</span> <span class="n">central_bin</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="c1"># finding the bottom bin of our range</span>
+    <span class="n">lower_mean</span> <span class="o">=</span> <span class="n">selected_center</span> <span class="o">-</span> <span class="n">selected_range</span>
+    <span class="n">lower_bin</span> <span class="o">=</span> <span class="n">bins_val</span><span class="p">[</span><span class="n">bins_val</span> <span class="o">&lt;</span> <span class="p">(</span><span class="n">lower_mean</span><span class="p">)]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+    <span class="n">lower_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">bins_val</span> <span class="o">==</span> <span class="n">lower_bin</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="c1"># finding the top bin of our range</span>
+    <span class="n">upper_mean</span> <span class="o">=</span> <span class="n">selected_center</span> <span class="o">+</span> <span class="n">selected_range</span>    
+    <span class="n">upper_bin</span> <span class="o">=</span> <span class="n">bins_val</span><span class="p">[</span><span class="n">bins_val</span> <span class="o">&lt;</span> <span class="p">(</span><span class="n">upper_mean</span><span class="p">)]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+    <span class="n">upper_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">bins_val</span> <span class="o">==</span> <span class="n">upper_bin</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="c1"># coloring</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">lower_index</span><span class="p">,</span> <span class="n">upper_index</span><span class="p">):</span>
+        <span class="n">rectangles</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">set_color</span><span class="p">(</span><span class="s2">&quot;navajowhite&quot;</span><span class="p">)</span>
+
+    <span class="c1"># label for the navajowhite bars</span>
+    <span class="n">n_samples</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="n">n_true</span> <span class="o">=</span> <span class="nb">len</span><span class="p">([</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">data</span> <span class="k">if</span> <span class="p">(</span><span class="n">s</span> <span class="o">&lt;=</span> <span class="n">upper_mean</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">s</span> <span class="o">&gt;=</span> <span class="n">lower_mean</span><span class="p">)])</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">add_patch</span><span class="p">(</span><span class="n">patches</span><span class="o">.</span><span class="n">Rectangle</span><span class="p">(</span>
+        <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">facecolor</span> <span class="o">=</span> <span class="s1">&#39;navajowhite&#39;</span><span class="p">,</span>
+        <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Pc of samples between -</span><span class="si">{}</span><span class="s2"> and </span><span class="si">{}</span><span class="s2"> = </span><span class="si">{:.2%}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">selected_range</span><span class="p">,</span> <span class="n">selected_range</span><span class="p">,</span> <span class="p">(</span><span class="n">n_true</span> <span class="o">/</span> <span class="n">n_samples</span><span class="p">))</span>
+     <span class="p">))</span>
+
+    <span class="c1"># formatting </span>
+    <span class="k">if</span> <span class="n">xlim</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">xlim</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Average value of samples&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">ylim</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="n">ylim</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Number of samples&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;upper right&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">fig</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="n">fig_z_score_large_sample_means</span> <span class="o">=</span> <span class="n">plot_distribution_with_range</span><span class="p">(</span>
+    <span class="n">large_sample_means</span><span class="p">[</span><span class="s2">&quot;z-score&quot;</span><span class="p">],</span> 
+    <span class="n">selected_center</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> 
+    <span class="n">selected_range</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+<span class="p">)</span>
+</code></pre></div>
+
+<p><img alt="png" src="/images/CLT_4_replacing_z-score_by_t-score_19_0.png"></p>
+<h3>Standardization when SEM is estimated</h3>
+<p>When a single sample is available, we use this sample standard deviation to compute the <em>standard error of the mean</em>, equal then to the <em>sample standard deviation</em> divided by the <em>square root of the sample size</em>.</p>
+<p>To be consistent, we should change our way of standardizing and see if it has an impact. Let us try this out.</p>
+<div class="highlight"><pre><span></span><code><span class="n">large_sample_means</span><span class="p">[</span><span class="s2">&quot;t-score&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="p">(</span><span class="n">large_sample_means</span><span class="p">[</span><span class="s2">&quot;mean&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">normal_population_mean</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">large_sample_means</span><span class="p">[</span><span class="s2">&quot;std&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="n">large_sample_size</span><span class="o">**</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mi">2</span><span class="p">)))</span>
+<span class="p">)</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="n">fig_adj_stdz_large_sample_means</span> <span class="o">=</span> <span class="n">plot_sample_means_distribution</span><span class="p">(</span>
+    <span class="n">large_sample_means</span><span class="p">[</span><span class="s2">&quot;t-score&quot;</span><span class="p">],</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">normal_population</span><span class="p">),</span>
+<span class="p">)</span>
+</code></pre></div>
+
+<p><img alt="png" src="/images/CLT_4_replacing_z-score_by_t-score_22_0.png"></p>
+<p>We can see that this new distribution is not exaclty the same as the one above, but it still looks normal. We can compare both: the <em>standard normal distribution</em> (the one of the z-scores) will be in orange and the <em>adjusted standard normal distribution</em> (the last one with an estimated SEM) will be in blue.</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">plot_distributions_comparison</span><span class="p">(</span>
+    <span class="n">means</span><span class="p">,</span> <span class="n">pop_mean</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="n">xlim</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ylim</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+    <span class="n">means_0</span><span class="p">,</span> <span class="n">means_1</span> <span class="o">=</span> <span class="n">means</span>
+    <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="n">figsize</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span>
+        <span class="p">[</span><span class="n">means_0</span><span class="p">,</span> <span class="n">means_1</span><span class="p">],</span> <span class="n">bins</span><span class="p">,</span> 
+        <span class="n">label</span><span class="o">=</span><span class="p">([</span><span class="n">means_0</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">means_1</span><span class="o">.</span><span class="n">name</span><span class="p">])</span>
+    <span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">means</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;g&quot;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;dashed&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Mean of sample means = </span><span class="si">{:.3f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">means</span><span class="p">))</span>
+    <span class="p">)</span>
+
+    <span class="c1"># formatting </span>
+    <span class="k">if</span> <span class="n">xlim</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">xlim</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Average value of samples&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">ylim</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="n">ylim</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Number of samples&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;upper right&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">fig</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="n">fig_comparison_for_large_samples</span> <span class="o">=</span> <span class="n">plot_distributions_comparison</span><span class="p">(</span>
+    <span class="p">[</span><span class="n">large_sample_means</span><span class="p">[</span><span class="s2">&quot;t-score&quot;</span><span class="p">],</span> <span class="n">large_sample_means</span><span class="p">[</span><span class="s2">&quot;z-score&quot;</span><span class="p">]],</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">normal_population</span><span class="p">),</span>
+    <span class="n">bins</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span>
+    <span class="n">xlim</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">7</span><span class="p">,</span><span class="mi">7</span><span class="p">)</span>
+<span class="p">)</span>
+</code></pre></div>
+
+<p><img alt="png" src="/images/CLT_4_replacing_z-score_by_t-score_25_0.png"></p>
+<p>For a large sample (n=1000), there is no strong visible difference between the shapes.</p>
+<h3>What about small samples?</h3>
+<p>Let us try the same comparison with a very small sample (n=3).</p>
+<div class="highlight"><pre><span></span><code><span class="n">small_sample_size</span> <span class="o">=</span> <span class="mi">3</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="n">small_sample_means</span> <span class="o">=</span> <span class="n">compute_sample_means</span><span class="p">(</span>
+    <span class="n">population</span><span class="o">=</span><span class="n">normal_population</span><span class="p">,</span>
+    <span class="n">sample_n</span><span class="o">=</span><span class="n">small_sample_size</span><span class="p">,</span>
+    <span class="n">n_samples</span><span class="o">=</span><span class="n">number_of_samples</span><span class="p">,</span>
+<span class="p">)</span>
+</code></pre></div>
+
+<p>Now we will do both the regular standardization and the adjusted for estimated SEM standardization.</p>
+<div class="highlight"><pre><span></span><code><span class="n">small_sample_means</span><span class="p">[</span><span class="s2">&quot;z-score&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span> 
+    <span class="p">(</span><span class="n">small_sample_means</span><span class="p">[</span><span class="s2">&quot;mean&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">normal_population_mean</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">normal_population_std</span> <span class="o">/</span> <span class="p">(</span><span class="n">small_sample_size</span><span class="o">**</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mf">2.</span><span class="p">)))</span> 
+<span class="p">)</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="n">small_sample_means</span><span class="p">[</span><span class="s2">&quot;t-score&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span> 
+    <span class="p">(</span><span class="n">small_sample_means</span><span class="p">[</span><span class="s2">&quot;mean&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">normal_population_mean</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">small_sample_means</span><span class="p">[</span><span class="s2">&quot;std&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="n">small_sample_size</span><span class="o">**</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mf">2.</span><span class="p">)))</span> 
+<span class="p">)</span>
+</code></pre></div>
+
+<p>And plot them on a graph.</p>
+<div class="highlight"><pre><span></span><code><span class="n">fig_comparison_for_small_samples</span> <span class="o">=</span> <span class="n">plot_distributions_comparison</span><span class="p">(</span>
+    <span class="p">[</span><span class="n">small_sample_means</span><span class="p">[</span><span class="s2">&quot;t-score&quot;</span><span class="p">],</span> <span class="n">small_sample_means</span><span class="p">[</span><span class="s2">&quot;z-score&quot;</span><span class="p">]],</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">normal_population</span><span class="p">),</span>
+    <span class="n">bins</span><span class="o">=</span><span class="mi">700</span><span class="p">,</span>
+    <span class="n">xlim</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">7</span><span class="p">,</span><span class="mi">7</span><span class="p">),</span>
+<span class="p">)</span>
+</code></pre></div>
+
+<p><img alt="png" src="/images/CLT_4_replacing_z-score_by_t-score_33_0.png"></p>
+<p>Now the difference between the shapes is clearly visible on the top part and the sides ! Let us count how many samples we now have between -2 and 2.</p>
+<div class="highlight"><pre><span></span><code><span class="n">fig_small_sample_t_score_at_2</span> <span class="o">=</span> <span class="n">plot_distribution_with_range</span><span class="p">(</span>
+    <span class="n">small_sample_means</span><span class="p">[</span><span class="s2">&quot;t-score&quot;</span><span class="p">],</span> 
+    <span class="n">selected_center</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> 
+    <span class="n">selected_range</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="n">bins</span><span class="o">=</span><span class="mi">700</span><span class="p">,</span>
+    <span class="n">xlim</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">7</span><span class="p">,</span><span class="mi">7</span><span class="p">),</span>
+<span class="p">)</span>
+</code></pre></div>
+
+<p><img alt="png" src="/images/CLT_4_replacing_z-score_by_t-score_35_0.png"></p>
+<p>This is far from the 95.45% expected with a z-score. We need to adjust the multiplicator of our confidence internval to that new distribution. The replacement for the z-score is the t-statistic.</p>
+<p>To reach the same level of confidence <em>for that sample size</em>, we will need to go to 4.527.</p>
+<div class="highlight"><pre><span></span><code><span class="n">t_statistic_0_9545</span> <span class="o">=</span> <span class="mf">4.527</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="n">fig_small_sample_t_score_at_4_3</span> <span class="o">=</span> <span class="n">plot_distribution_with_range</span><span class="p">(</span>
+    <span class="n">small_sample_means</span><span class="p">[</span><span class="s2">&quot;t-score&quot;</span><span class="p">],</span> 
+    <span class="n">selected_center</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> 
+    <span class="n">selected_range</span><span class="o">=</span><span class="n">t_statistic_0_9545</span><span class="p">,</span>
+    <span class="n">bins</span><span class="o">=</span><span class="mi">700</span><span class="p">,</span>
+    <span class="n">xlim</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">7</span><span class="p">,</span><span class="mi">7</span><span class="p">),</span>
+<span class="p">)</span>
+</code></pre></div>
+
+<p><img alt="png" src="/images/CLT_4_replacing_z-score_by_t-score_38_0.png"></p>
+<p>The t-statistic depends on this distribution, called Student Distribution. We actually have many Student distribution<strong>s</strong>, as there is a different one for every sample size. The bigger the sample, the closer the distribution is to the normal distribution, as we saw with our large sample example.</p>
+<p>Replacing the z-score with our t-statistic gives us a reliable method to build a confidence interval in case of small samples.</p>
+  </div><!-- /.entry-content -->
+</section>
+        <footer id="contentinfo" class="body">
+            <p>© 2022 Bacou</p>
+        </footer><!-- /#contentinfo -->
+
+</body>
+</html>
