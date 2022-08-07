@@ -2,7 +2,8 @@
 <html lang="fr">
 <head>
           <link rel="stylesheet" type="text/css" href="/theme/css/style.css" />
-        <title>bacou.github.io - Building the sampling distribution of the mean with pandas and matplotlib</title>
+        <link rel="stylesheet" type="text/css" href="/theme/css/code.css" />
+        <title>bacou.github.io - The Sampling Distribution of the Mean</title>
         <meta charset="utf-8" />
         <meta name="generator" content="Pelican" />
 
@@ -16,44 +17,42 @@
 
 <body id="index" class="home">
         <header id="banner" class="body">
-            <img id="maba" src="/images/blanc_fibonacci.png" alt="blanc" width="360"/>
+            <img id="maba" src="/images/blanc_fibonacci.png" alt="fibonacci" width="360"/>
             <h1><a href="/">bacou.github.io</a></h1>
             <p></p>
         </header><!-- /#banner -->
 
         <nav id="menu"><ul>
             <li>
-                <a href="/">Accueil</a></li>
+                <a href="/" data-text="Accueil">Accueil</a></li>
             <li>
-                <a href="/tags.html">Libellés</a></li>
+                <a href="/tags.html" data-text="Libellés">Libellés</a></li>
             <li>
-                <a href="/pages/a-propos.html">À propos</a></li>
+                <a href="/pages/a-propos.html" data-text="À propos">À propos</a></li>
         </ul></nav><!-- /#menu -->
-
 <section id="content" class="body">
   <header>
     <h2 class="entry-title">
       <a href="/posts/clt-1-sampling-distribution-of-the-mean.html" rel="bookmark"
-         title="Permalink to Building the sampling distribution of the mean with pandas and matplotlib">Building the sampling distribution of the mean with pandas and matplotlib</a></h2>
+         title="Permalink to The Sampling Distribution of the Mean">The Sampling Distribution of the Mean</a></h2>
  
   </header>
-  <footer class="post-info">
+  <footer class="post-info" id="article-post-info">
     <time class="published" datetime="2021-03-12T00:00:00+01:00">
       12/03/2021
     </time>
 <!--         <div class="category">
-        Catégorie :
-        <a href="/category/misc.html">misc</a>
+        Catégorie : <a href="/category/misc.html">misc</a>
     </div>
  -->
     <div class="tags">
-        <!-- Libellés : -->
             <a href="/tag/stats.html">stats</a>
             <a href="/tag/python.html">python</a>
     </div>
   </footer><!-- /.post-info -->
   <div class="entry-content">
-    <p>A lot of science and engineering today uses inferential statistics. Which is all about getting information about a population from a sample. The mean of the sample is commonly used to infer (make an educated guess) the mean of the population. It happens to have a nice property that makes it easy to handle:</p>
+    <p>This article is the first part of a four-part serie on the Central Limit Theorem (parts <a href="./clt-2-meeting-the-conditions.html">2</a>, <a href="./clt-3-building-confidence-intervals.html">3</a>, <a href="./clt-4-replacing-z-score-by-t-score.html">4</a>).</p>
+<p>A lot of science and engineering today uses inferential statistics. Which is all about getting information about a population from a sample. The mean of the sample is commonly used to infer (make an educated guess) the mean of the population. It happens to have a nice property that makes it easy to handle:</p>
 <p><strong>The sampling distribution of the mean is normally distributed around the population mean</strong> (well mostly, because of course "terms and conditions apply").</p>
 <p>And this is something we can visualize. </p>
 <p>Let us start by creating a population that is not normally distributed. I will start by simulating a population for which I measured a variable <em>Value</em>, that follows a Lomax (or Pareto II) distribution. This distribution has many applications in business and economics - some information about it in the two links below.</p>
@@ -235,11 +234,12 @@
 <li>The sample size <em>n should approach infinity</em> (let us say minimum 30 observations, as we saw in the example above, that worked fine).</li>
 <li>The population distribution should have a <em>finite variance</em>: that means that it does not work with some specific population distributions (<a href="https://stats.stackexchange.com/a/159998">which are not very common</a>).</li>
 </ul>
-<p>In the next article, we will see what happens when these three conditions are not met.</p>
+<p>In the <a href="./clt-2-meeting-the-conditions.html">next article</a>, we will see what happens when these three conditions are not met.</p>
   </div><!-- /.entry-content -->
 </section>
         <footer id="contentinfo" class="body">
-            <p>© 2022 Bacou</p>
+            <span style="float:left;">© 2022 Balthazar Coutant</span>
+            <span style="float:right"><a href="#index">Back to top</a></span>
         </footer><!-- /#contentinfo -->
 
 </body>

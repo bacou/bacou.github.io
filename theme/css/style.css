@@ -1,18 +1,33 @@
+/* common variables */
+
+:root {
+  --line-color : #bbbbbd ;
+  --article-spacing: 5em ;
+}
+
 /* global */
 
 html {
-    background: #CED4E1 ; /*#F5F6F8; */
+    background: #EBEEF2 ;
 }
 
 body {
     font-family : helvetica neue, helvetica, sans-serif ;
     font-size : 100% ;
     color : #404040 ;
-    line-height: 1.4em;
+    line-height: 1.6em;
     background-color : white ;
-    width : 90% ;
-    max-width: 1000px ;
-    margin : auto ;
+    width : 95% ;
+    max-width: 900px ;
+    box-shadow: 0 0 10px rgba(50,50,50,.17);
+    padding-top: 3em ;
+    padding-bottom: 2em ;
+    padding-right: 60px ;
+    padding-left: 60px ;
+    margin-top : 1em ;
+    margin-bottom : 1em ;
+    margin-right : auto ;
+    margin-left : auto ;
     display : block ;
 }
 
@@ -33,32 +48,34 @@ img {
     max-height : 100% ;
 }
 
+.center {
+    text-align: center ;
+}
+
 a {
-    color : #337ab7 ;
+    color : #2c6899 ;
+    text-decoration: none ;
     line-height: inherit ;
     font-size : inherit ;
-    text-decoration: none ;
 }
 
 a:hover {
-    color : #296292 ;
+    color : #527a9b ;
     text-decoration: underline ;
 }
 
 h1 a {
-    font-weight: normal;
     color : inherit !important ;
     text-decoration : none ;
 }
 
-/* #banner */
-
-#banner {
-    padding-top : 40px ;
-    padding-bottom : 20px ;
-    padding-right : 40px ;
-    padding-left : 40px ;
+p img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
 }
+
+/* #banner */
 
 #banner {
     position : relative ;
@@ -67,15 +84,15 @@ h1 a {
 
 #banner h1 {
     position : absolute ;
-    top : 41px ;
-    left : 72px ;
+    top : 0px ;
+    left : 20px ;
 }
 
-/*#banner p {
+#banner p {
     position : absolute ;
     top :32px ;
     left : 140px ;
-}*/
+}
 
 #banner img {
     position : relative ;
@@ -84,17 +101,16 @@ h1 a {
 /* #menu */
 
 #menu {
-    margin-top : 0px ;
-    margin-bottom : 60px ;
-    border-bottom: 1px solid #bbbbbd ;
-    border-top: 1px solid #bbbbbd ;
+    margin-top : 3em ;
     display: !important ;
+    border-bottom: 1px solid var(--line-color) ;
+    border-top: 1px solid var(--line-color) ;
     font-size : 80% ;
     width: 100% ;
 }
 
 #menu ul {
-    padding-left : 40px ;
+    padding : 0 ;
     margin : 0 ;
 }
 
@@ -103,77 +119,77 @@ h1 a {
     text-transform : uppercase ;
 }
 
-#menu svg {
-    margin-left : 10px ;
-    margin-top : -6px ;
-    display : inline-block ;
-    vertical-align : middle ;
-}
-
-#menu a {
-    display : block ;
-    padding : 1em ;
-    color : #595959 ;
-    text-decoration : none ;
-    border-bottom: 3px solid transparent ;
-}
-
-#menu a:hover {
+#menu li a {
     color : #404040 ;
     text-decoration : none ;
-    border-bottom: 3px solid lightgrey ;
+    display: inline-block;
+    padding: 1em;
+    border-bottom: 3px solid transparent;
+}
+
+#menu li a:hover {
+    color : #595959 ;
+    text-decoration : none ;
+    border-bottom: 3px solid var(--line-color) ;
+    font-weight: bold ;
+}
+
+/*this is to avoid changing container size when bolding*/
+#menu li a::after {
+    display: block ;
+    content: attr(data-text) ;
+    content: attr(data-text) / "";
+    font-weight: bold ;
+    height: 1px ;
+    color: transparent ;
+    overflow: hidden ;
+    visibility: hidden ;
 }
 
 #menu li.active a {
-    border-bottom: 3px solid #2d3748 ;
+    border-bottom: 3px solid #404040 ;
+    font-weight: bold ;
 }
 
-/* #content */
-
 #content {
-    padding-right: 40px ;
-    padding-left: 40px ;
+    margin-top : 2em ;
+    margin-bottom : 2em ;
 }
 
 /* #post-list */
 
 #post-list {
     list-style-type : none ;
+    line-height: 1.4em ;
+    margin-top: var(--article-spacing) ;
+    margin-bottom: var(--article-spacing) ;
     padding: 0 ;
 }
 
 #post-list li {
-    margin-bottom : 20px ;
-    padding-bottom: 20px ;
-}
-
-#post-list li:last-child {
-    padding-bottom: 0px ;
-    border-bottom : none ;
+    margin-bottom : calc(var(--article-spacing)*2/3) ;
+    /*padding-bottom: calc(var(--article-spacing)*2/3) ;*/
 }
 
 /* article.hentry */
 
 h2 {
-    color: #2d3748 ;
-    margin-top: 60px ;
-    margin-bottom: 60px ;
-    font-weight: normal ;
-    font-size: 2em;
-    line-height: 1em;
-}
-
-.entry-title {
-    margin-bottom: 0px ;
+    color: #ababab ;
+    margin-top: 2em ;
+    margin-bottom: 2em ;
 }
 
 article.hentry h3 {
     margin : 0px ;
-    font-weight: normal ;
+}
+
+h2 a {
+    color : #ababab ;
+    text-decoration: none ;
 }
 
 h2 a, article.hentry h3 a {
-    color : #2d3748 ;
+    color : #404040 ;
     text-decoration: none ;
 }
 
@@ -187,130 +203,80 @@ article.hentry div.entry-content p {
     margin-bottom: 0px ;
 }
 
-.hentry-post-info{
+.entry-title {
+  margin-bottom: 0px;
+}
+
+/* post-info */
+
+.post-info {
     margin-top: 5px ;
     margin-bottom: 5px ;
-    color : #5f6c80 ;
-    font-size : 90% ;
+    color: #707070 ;
+    font-size: 90% ;
 }
 
-.post-info{
-    margin-top: 10px ;
-    margin-bottom: 60px ;
-    color : #5f6c80 ;
-    font-size : 90% ;
+.post-info time,.post-info div {
+    display: inline-block ;
+ }
+
+/* article page*/
+
+#article-post-info {
+    margin-top: 5px ;
+    margin-bottom: 3em ;
 }
 
-/* cells */
+/* tags */
 
-div.prompt {
-    min-width: 10ex;
+.tags {
+    margin-left: 0.6em ;
+    margin-right: 0.6em ;
 }
 
-pre {
-    overflow-x: auto ;
+.tags a, #tag-list li a{
+    color: #707070;
+    background-color: #e1e1e1 ;
+    border-radius: 5px ;
+    padding: 0.15em 0.3em;
 }
 
-div.input_area {
-    margin-right : 2em ;
+.tags a:hover, #tag-list li a:hover{
+    color: white ;
+    text-decoration: none ;
+    background-color: #696969 ;
+}
+
+#tag-title {
+    text-decoration: none ;
+    font-weight: normal ;
+    color: white ;
+    background-color: #696969 ;
+    border-radius: 5px ;
+    padding: 0.15em 0.3em;
+}
+
+#tag-list {
+    list-style-type : none ;
+    padding-left : 1em ;
+}
+
+#tag-list li {
+    padding-top: 0.2em ;
+    padding-bottom: 0.2em ;
 }
 
 /* #contentinfo */
 
 #contentinfo {
-    margin-top: 60px;
-    padding-top : 20px ;
-    padding-bottom : 20px ;
-    padding-right : 40px ;
-    padding-left : 40px ;
-    border-top : 1px solid #bbbbbd ;/*#ededed ;*/
-    color : #ababab ;
+    margin-top : 2em ;
+    padding-top: 2em ;
+    padding-bottom : 2em ;
+    border-top : 1px solid var(--line-color) ;
+    color : #707070 ;
     font-size : 80% ;
 }
 
-#contentinfo p {
-    margin : 0px ;
+#index-content + #contentinfo {
+    margin-top : 0 ;
 }
-
-/* #code */
-
-pre { 
-    line-height: 125% ;
-    border: 1px solid #cfcfcf;
-    padding: 12px 12px ;
-}
-
-td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
-span.linenos { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
-td.linenos .special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
-span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
-
-.highlight .hll { background-color: #ffffcc }
-.highlight { background: #f8f8f8; }
-.highlight .c { color: #3D7B7B; font-style: italic } /* Comment */
-.highlight .err { border: 1px solid #FF0000 } /* Error */
-.highlight .k { color: #008000; font-weight: bold } /* Keyword */
-.highlight .o { color: #666666 } /* Operator */
-.highlight .ch { color: #3D7B7B; font-style: italic } /* Comment.Hashbang */
-.highlight .cm { color: #3D7B7B; font-style: italic } /* Comment.Multiline */
-.highlight .cp { color: #9C6500 } /* Comment.Preproc */
-.highlight .cpf { color: #3D7B7B; font-style: italic } /* Comment.PreprocFile */
-.highlight .c1 { color: #3D7B7B; font-style: italic } /* Comment.Single */
-.highlight .cs { color: #3D7B7B; font-style: italic } /* Comment.Special */
-.highlight .gd { color: #A00000 } /* Generic.Deleted */
-.highlight .ge { font-style: italic } /* Generic.Emph */
-.highlight .gr { color: #E40000 } /* Generic.Error */
-.highlight .gh { color: #000080; font-weight: bold } /* Generic.Heading */
-.highlight .gi { color: #008400 } /* Generic.Inserted */
-.highlight .go { color: #717171 } /* Generic.Output */
-.highlight .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
-.highlight .gs { font-weight: bold } /* Generic.Strong */
-.highlight .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
-.highlight .gt { color: #0044DD } /* Generic.Traceback */
-.highlight .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
-.highlight .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
-.highlight .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
-.highlight .kp { color: #008000 } /* Keyword.Pseudo */
-.highlight .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
-.highlight .kt { color: #B00040 } /* Keyword.Type */
-.highlight .m { color: #666666 } /* Literal.Number */
-.highlight .s { color: #BA2121 } /* Literal.String */
-.highlight .na { color: #687822 } /* Name.Attribute */
-.highlight .nb { color: #008000 } /* Name.Builtin */
-.highlight .nc { color: #0000FF; font-weight: bold } /* Name.Class */
-.highlight .no { color: #880000 } /* Name.Constant */
-.highlight .nd { color: #AA22FF } /* Name.Decorator */
-.highlight .ni { color: #717171; font-weight: bold } /* Name.Entity */
-.highlight .ne { color: #CB3F38; font-weight: bold } /* Name.Exception */
-.highlight .nf { color: #0000FF } /* Name.Function */
-.highlight .nl { color: #767600 } /* Name.Label */
-.highlight .nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
-.highlight .nt { color: #008000; font-weight: bold } /* Name.Tag */
-.highlight .nv { color: #19177C } /* Name.Variable */
-.highlight .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
-.highlight .w { color: #bbbbbb } /* Text.Whitespace */
-.highlight .mb { color: #666666 } /* Literal.Number.Bin */
-.highlight .mf { color: #666666 } /* Literal.Number.Float */
-.highlight .mh { color: #666666 } /* Literal.Number.Hex */
-.highlight .mi { color: #666666 } /* Literal.Number.Integer */
-.highlight .mo { color: #666666 } /* Literal.Number.Oct */
-.highlight .sa { color: #BA2121 } /* Literal.String.Affix */
-.highlight .sb { color: #BA2121 } /* Literal.String.Backtick */
-.highlight .sc { color: #BA2121 } /* Literal.String.Char */
-.highlight .dl { color: #BA2121 } /* Literal.String.Delimiter */
-.highlight .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
-.highlight .s2 { color: #BA2121 } /* Literal.String.Double */
-.highlight .se { color: #AA5D1F; font-weight: bold } /* Literal.String.Escape */
-.highlight .sh { color: #BA2121 } /* Literal.String.Heredoc */
-.highlight .si { color: #A45A77; font-weight: bold } /* Literal.String.Interpol */
-.highlight .sx { color: #008000 } /* Literal.String.Other */
-.highlight .sr { color: #A45A77 } /* Literal.String.Regex */
-.highlight .s1 { color: #BA2121 } /* Literal.String.Single */
-.highlight .ss { color: #19177C } /* Literal.String.Symbol */
-.highlight .bp { color: #008000 } /* Name.Builtin.Pseudo */
-.highlight .fm { color: #0000FF } /* Name.Function.Magic */
-.highlight .vc { color: #19177C } /* Name.Variable.Class */
-.highlight .vg { color: #19177C } /* Name.Variable.Global */
-.highlight .vi { color: #19177C } /* Name.Variable.Instance */
-.highlight .vm { color: #19177C } /* Name.Variable.Magic */
-.highlight .il { color: #666666 } /* Literal.Number.Integer.Long */

@@ -2,7 +2,8 @@
 <html lang="fr">
 <head>
           <link rel="stylesheet" type="text/css" href="/theme/css/style.css" />
-        <title>bacou.github.io - Meeting the conditions of the Central Limit Theorem with pandas and matplotlib</title>
+        <link rel="stylesheet" type="text/css" href="/theme/css/code.css" />
+        <title>bacou.github.io - Conditions of the Central Limit Theorem</title>
         <meta charset="utf-8" />
         <meta name="generator" content="Pelican" />
 
@@ -16,44 +17,42 @@
 
 <body id="index" class="home">
         <header id="banner" class="body">
-            <img id="maba" src="/images/blanc_fibonacci.png" alt="blanc" width="360"/>
+            <img id="maba" src="/images/blanc_fibonacci.png" alt="fibonacci" width="360"/>
             <h1><a href="/">bacou.github.io</a></h1>
             <p></p>
         </header><!-- /#banner -->
 
         <nav id="menu"><ul>
             <li>
-                <a href="/">Accueil</a></li>
+                <a href="/" data-text="Accueil">Accueil</a></li>
             <li>
-                <a href="/tags.html">Libellés</a></li>
+                <a href="/tags.html" data-text="Libellés">Libellés</a></li>
             <li>
-                <a href="/pages/a-propos.html">À propos</a></li>
+                <a href="/pages/a-propos.html" data-text="À propos">À propos</a></li>
         </ul></nav><!-- /#menu -->
-
 <section id="content" class="body">
   <header>
     <h2 class="entry-title">
       <a href="/posts/clt-2-meeting-the-conditions.html" rel="bookmark"
-         title="Permalink to Meeting the conditions of the Central Limit Theorem with pandas and matplotlib">Meeting the conditions of the Central Limit Theorem with pandas and matplotlib</a></h2>
+         title="Permalink to Conditions of the Central Limit Theorem">Conditions of the Central Limit Theorem</a></h2>
  
   </header>
-  <footer class="post-info">
+  <footer class="post-info" id="article-post-info">
     <time class="published" datetime="2021-06-01T00:00:00+02:00">
       01/06/2021
     </time>
 <!--         <div class="category">
-        Catégorie :
-        <a href="/category/misc.html">misc</a>
+        Catégorie : <a href="/category/misc.html">misc</a>
     </div>
  -->
     <div class="tags">
-        <!-- Libellés : -->
             <a href="/tag/stats.html">stats</a>
             <a href="/tag/python.html">python</a>
     </div>
   </footer><!-- /.post-info -->
   <div class="entry-content">
-    <p><a href="./clt-1-sampling-distribution-of-the-mean">In this article</a> we saw that the sampling distribution of the mean is normally distributed around the population mean, as established by the Central Limit Theorem. </p>
+    <p>This article is the second part of a four-part serie on the Central Limit Theorem (parts <a href="./clt-1-sampling-distribution-of-the-mean">1</a>, <a href="./clt-3-building-confidence-intervals.html">3</a>, <a href="./clt-4-replacing-z-score-by-t-score.html">4</a>).</p>
+<p><a href="./clt-1-sampling-distribution-of-the-mean">In the first part</a> we saw that the sampling distribution of the mean is normally distributed around the population mean, as established by the Central Limit Theorem. </p>
 <p>There are three conditions around it.</p>
 <ul>
 <li>The variables should be <em>independent</em> from each other.</li>
@@ -353,11 +352,13 @@
 </code></pre></div>
 
 <p><img alt="png" src="/images/CLT_2_meeting_the_conditions_37_0.png"></p>
-<p>We can see it reduces the global difference between the cases, but that is definitivelly not perfect. In a sampling without replacement situation, we must try to work with the smallest sample compatible with your purpose.</p>
+<p>We can see it reduces the global difference between the cases, but that is definitivelly not perfect. In a sampling without replacement situation, we must try to work with the smallest sample compatible with your purpose. </p>
+<p><a href="./clt-3-building-confidence-intervals.html">Next</a> we will see how we can use the Central Limit Theorem to make an estimation of the population mean using the mean of a single sample.</p>
   </div><!-- /.entry-content -->
 </section>
         <footer id="contentinfo" class="body">
-            <p>© 2022 Bacou</p>
+            <span style="float:left;">© 2022 Balthazar Coutant</span>
+            <span style="float:right"><a href="#index">Back to top</a></span>
         </footer><!-- /#contentinfo -->
 
 </body>
