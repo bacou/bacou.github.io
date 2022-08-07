@@ -2,7 +2,8 @@
 <html lang="fr">
 <head>
           <link rel="stylesheet" type="text/css" href="/theme/css/style.css" />
-        <title>bacou.github.io - Using a sample to estimate the population mean with pandas and matplotlib</title>
+        <link rel="stylesheet" type="text/css" href="/theme/css/code.css" />
+        <title>bacou.github.io - A Sample to Estimate the Population Mean</title>
         <meta charset="utf-8" />
         <meta name="generator" content="Pelican" />
 
@@ -16,44 +17,42 @@
 
 <body id="index" class="home">
         <header id="banner" class="body">
-            <img id="maba" src="/images/blanc_fibonacci.png" alt="blanc" width="360"/>
+            <img id="maba" src="/images/blanc_fibonacci.png" alt="fibonacci" width="360"/>
             <h1><a href="/">bacou.github.io</a></h1>
             <p></p>
         </header><!-- /#banner -->
 
         <nav id="menu"><ul>
             <li>
-                <a href="/">Accueil</a></li>
+                <a href="/" data-text="Accueil">Accueil</a></li>
             <li>
-                <a href="/tags.html">Libellés</a></li>
+                <a href="/tags.html" data-text="Libellés">Libellés</a></li>
             <li>
-                <a href="/pages/a-propos.html">À propos</a></li>
+                <a href="/pages/a-propos.html" data-text="À propos">À propos</a></li>
         </ul></nav><!-- /#menu -->
-
 <section id="content" class="body">
   <header>
     <h2 class="entry-title">
       <a href="/posts/clt-3-building-confidence-intervals.html" rel="bookmark"
-         title="Permalink to Using a sample to estimate the population mean with pandas and matplotlib">Using a sample to estimate the population mean with pandas and matplotlib</a></h2>
+         title="Permalink to A Sample to Estimate the Population Mean">A Sample to Estimate the Population Mean</a></h2>
  
   </header>
-  <footer class="post-info">
-    <time class="published" datetime="2021-06-21T00:00:00+02:00">
-      21/06/2021
+  <footer class="post-info" id="article-post-info">
+    <time class="published" datetime="2021-09-21T00:00:00+02:00">
+      21/09/2021
     </time>
 <!--         <div class="category">
-        Catégorie :
-        <a href="/category/misc.html">misc</a>
+        Catégorie : <a href="/category/misc.html">misc</a>
     </div>
  -->
     <div class="tags">
-        <!-- Libellés : -->
             <a href="/tag/stats.html">stats</a>
             <a href="/tag/python.html">python</a>
     </div>
   </footer><!-- /.post-info -->
   <div class="entry-content">
-    <p><a href="./clt-1-sampling-distribution-of-the-mean">In this article</a> we saw that the sampling distribution of the mean is normally distributed around the population mean, as established by the Central Limit Theorem. We use this property to estimate the population mean using only a single sample. We will see now how we can do and visualize this estimation.</p>
+    <p>This article is the third part of a four-part serie on the Central Limit Theorem (parts <a href="./clt-1-sampling-distribution-of-the-mean">1</a>, <a href="./clt-2-meeting-the-conditions.html">2</a>, <a href="./clt-4-replacing-z-score-by-t-score.html">4</a>).</p>
+<p><a href="./clt-1-sampling-distribution-of-the-mean">Previously</a> we saw that the sampling distribution of the mean is normally distributed around the population mean, as established by the Central Limit Theorem, and <a href="./clt-2-meeting-the-conditions.html">here</a> how the terms and conditions apply. We use this to estimate the population mean using only a single sample. We will see now how we can do and visualize this estimation.</p>
 <div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">random</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -427,11 +426,12 @@
     mean (or mean of sampling distribution of mean): 66.11%
 </code></pre></div>
 
-<p>We are far from the 95.45% we expected. For this reason, when using small samples, the z-score is replaced by another value adjusting for the (small) sample size and the SEM estimation: the t-score. We will discuss this in a next article.</p>
+<p>We are far from the 95.45% we expected. For this reason, when using small samples, the z-score is replaced by another value adjusting for the (small) sample size and the SEM estimation: the t-score. We will discuss this in a <a href="./clt-4-replacing-z-score-by-t-score.html">next article</a>.</p>
   </div><!-- /.entry-content -->
 </section>
         <footer id="contentinfo" class="body">
-            <p>© 2022 Bacou</p>
+            <span style="float:left;">© 2022 Balthazar Coutant</span>
+            <span style="float:right"><a href="#index">Back to top</a></span>
         </footer><!-- /#contentinfo -->
 
 </body>

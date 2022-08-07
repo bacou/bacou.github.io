@@ -2,7 +2,8 @@
 <html lang="fr">
 <head>
           <link rel="stylesheet" type="text/css" href="/theme/css/style.css" />
-        <title>bacou.github.io - Replacing z-scores by t-scores with pandas and matplotlib</title>
+        <link rel="stylesheet" type="text/css" href="/theme/css/code.css" />
+        <title>bacou.github.io - From z-scores to t-scores</title>
         <meta charset="utf-8" />
         <meta name="generator" content="Pelican" />
 
@@ -16,45 +17,43 @@
 
 <body id="index" class="home">
         <header id="banner" class="body">
-            <img id="maba" src="/images/blanc_fibonacci.png" alt="blanc" width="360"/>
+            <img id="maba" src="/images/blanc_fibonacci.png" alt="fibonacci" width="360"/>
             <h1><a href="/">bacou.github.io</a></h1>
             <p></p>
         </header><!-- /#banner -->
 
         <nav id="menu"><ul>
             <li>
-                <a href="/">Accueil</a></li>
+                <a href="/" data-text="Accueil">Accueil</a></li>
             <li>
-                <a href="/tags.html">Libellés</a></li>
+                <a href="/tags.html" data-text="Libellés">Libellés</a></li>
             <li>
-                <a href="/pages/a-propos.html">À propos</a></li>
+                <a href="/pages/a-propos.html" data-text="À propos">À propos</a></li>
         </ul></nav><!-- /#menu -->
-
 <section id="content" class="body">
   <header>
     <h2 class="entry-title">
       <a href="/posts/clt-4-replacing-z-score-by-t-score.html" rel="bookmark"
-         title="Permalink to Replacing z-scores by t-scores with pandas and matplotlib">Replacing z-scores by t-scores with pandas and matplotlib</a></h2>
+         title="Permalink to From z-scores to t-scores">From z-scores to t-scores</a></h2>
  
   </header>
-  <footer class="post-info">
-    <time class="published" datetime="2021-09-07T00:00:00+02:00">
-      07/09/2021
+  <footer class="post-info" id="article-post-info">
+    <time class="published" datetime="2022-01-07T00:00:00+01:00">
+      07/01/2022
     </time>
 <!--         <div class="category">
-        Catégorie :
-        <a href="/category/misc.html">misc</a>
+        Catégorie : <a href="/category/misc.html">misc</a>
     </div>
  -->
     <div class="tags">
-        <!-- Libellés : -->
             <a href="/tag/stats.html">stats</a>
             <a href="/tag/python.html">python</a>
     </div>
   </footer><!-- /.post-info -->
   <div class="entry-content">
-    <p><a href="./clt-3-building-confidence-intervals">In this article</a> we saw how to build a confidence interval around a sample mean to make an estimation of the population mean. We noticed that, for small samples, our confidence intervals do not seem to work anymore. For that reason the z-score we used is replaced by a t-score.</p>
-<p><strong>What was the z-score again?</strong> The z-score, z-value or <a href="https://en.wikipedia.org/wiki/Standard_score">standard score</a> is the number of standard deviation between an observation and the mean, in the case of a normal distribution. For example, we can use it the say that 95.45% of the values lay within the 2 first standard deviations around the mean. In that case the "2" is a z-score. In the same context, a z-score of "1" gives 68.27% of the observations, a z-score of "3" gives 99.73%.</p>
+    <p>This article is the fourth and last part of a four-part serie on the Central Limit Theorem (parts <a href="./clt-1-sampling-distribution-of-the-mean">1</a>, <a href="./clt-2-meeting-the-conditions.html">2</a>, <a href="./clt-3-building-confidence-intervals.html">3</a>).</p>
+<p><a href="./clt-3-building-confidence-intervals">In the third part</a> we saw how to build a confidence interval around a sample mean to make an estimation of the population mean. We noticed that, for small samples, our confidence intervals do not seem to work anymore. For that reason we will replace our z-score by a t-score.</p>
+<p><strong>What was the z-score again?</strong> The z-score, z-value or <a href="https://en.wikipedia.org/wiki/Standard_score">standard score</a> is the number of standard deviations between an observation and the mean, in the case of a normal distribution. For example, we can use it to say that 95.45% of normally distributed values lay within the 2 first standard deviations around the mean. In that case the "2" is a z-score. In the same context, a z-score of "1" gives us 68.27% of the observations, a z-score of "3" gives us 99.73%.</p>
 <div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
@@ -62,7 +61,7 @@
 <span class="kn">import</span> <span class="nn">matplotlib.patches</span> <span class="k">as</span> <span class="nn">patches</span>
 </code></pre></div>
 
-<p>As always we will start by creating a population of 100,000 observations, but this time we will use a normal one. This will make our sampling distribution of the mean more normal and allow us to emphasize the details we want to see.</p>
+<p>As always we will start by creating a population of 100,000 observations. Those will be normally distributed. This will make our sampling distribution of the mean as normal as possible and allow us to emphasize the details we want to see.</p>
 <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">generate_rand_normal</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
     <span class="n">mean</span><span class="p">,</span> <span class="n">std_dev</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">3</span>
     <span class="n">s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">mean</span><span class="p">,</span> <span class="n">std_dev</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
@@ -245,7 +244,7 @@
 
 <p><img alt="png" src="/images/CLT_4_replacing_z-score_by_t-score_19_0.png"></p>
 <h3>Standardization when SEM is estimated</h3>
-<p>When a single sample is available, we use this sample standard deviation to compute the <em>standard error of the mean</em>, equal then to the <em>sample standard deviation</em> divided by the <em>square root of the sample size</em>.</p>
+<p>When a single sample is available, we use its standard deviation to compute the <em>standard error of the mean</em>, equal then to the <em>sample standard deviation</em> divided by the <em>square root of the sample size</em>.</p>
 <p>To be consistent, we should change our way of standardizing and see if it has an impact. Let us try this out.</p>
 <div class="highlight"><pre><span></span><code><span class="n">large_sample_means</span><span class="p">[</span><span class="s2">&quot;t-score&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
     <span class="p">(</span><span class="n">large_sample_means</span><span class="p">[</span><span class="s2">&quot;mean&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">normal_population_mean</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">large_sample_means</span><span class="p">[</span><span class="s2">&quot;std&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="n">large_sample_size</span><span class="o">**</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mi">2</span><span class="p">)))</span>
@@ -297,7 +296,7 @@
 <p><img alt="png" src="/images/CLT_4_replacing_z-score_by_t-score_25_0.png"></p>
 <p>For a large sample (n=1000), there is no strong visible difference between the shapes.</p>
 <h3>What about small samples?</h3>
-<p>Let us try the same comparison with a very small sample (n=3).</p>
+<p>Let us try the same comparison with a very small sample (only three observations, n=3).</p>
 <div class="highlight"><pre><span></span><code><span class="n">small_sample_size</span> <span class="o">=</span> <span class="mi">3</span>
 </code></pre></div>
 
@@ -308,7 +307,7 @@
 <span class="p">)</span>
 </code></pre></div>
 
-<p>Now we will do both the regular standardization and the adjusted for estimated SEM standardization.</p>
+<p>Now we will do both the regular standardization and the adjusted standardization for an estimated SEM.</p>
 <div class="highlight"><pre><span></span><code><span class="n">small_sample_means</span><span class="p">[</span><span class="s2">&quot;z-score&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span> 
     <span class="p">(</span><span class="n">small_sample_means</span><span class="p">[</span><span class="s2">&quot;mean&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">normal_population_mean</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">normal_population_std</span> <span class="o">/</span> <span class="p">(</span><span class="n">small_sample_size</span><span class="o">**</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mf">2.</span><span class="p">)))</span> 
 <span class="p">)</span>
@@ -340,8 +339,8 @@
 </code></pre></div>
 
 <p><img alt="png" src="/images/CLT_4_replacing_z-score_by_t-score_35_0.png"></p>
-<p>This is far from the 95.45% expected with a z-score. We need to adjust the multiplicator of our confidence internval to that new distribution. The replacement for the z-score is the t-statistic.</p>
-<p>To reach the same level of confidence <em>for that sample size</em>, we will need to go to 4.527.</p>
+<p>This is far from the 95.45% expected with a z-score. We need to adjust the multiplicator of our confidence interval to that new distribution. Our previous multiplicator was a <em>z-score</em> of "2". Now we will use one call <em>t-statistic</em>.</p>
+<p>To reach the same level of confidence <em>for that sample size</em>, we will need to use a multiplicator of 4.527; this is our new <em>t-statistic</em>.</p>
 <div class="highlight"><pre><span></span><code><span class="n">t_statistic_0_9545</span> <span class="o">=</span> <span class="mf">4.527</span>
 </code></pre></div>
 
@@ -355,12 +354,13 @@
 </code></pre></div>
 
 <p><img alt="png" src="/images/CLT_4_replacing_z-score_by_t-score_38_0.png"></p>
-<p>The t-statistic depends on this distribution, called Student Distribution. We actually have many Student distribution<strong>s</strong>, as there is a different one for every sample size. The bigger the sample, the closer the distribution is to the normal distribution, as we saw with our large sample example.</p>
-<p>Replacing the z-score with our t-statistic gives us a reliable method to build a confidence interval in case of small samples.</p>
+<p>The t-statistic depends on this new distribution, called a Student Distribution. There are actually many Student distribution<strong>s</strong>, as there is a different one for each sample size. The bigger the sample, the closer the Student distribution is to the normal distribution. This is why we could use the z-score with our large sample example.</p>
+<p>Replacing the z-score with a t-statistic gives us a reliable method to build a confidence interval in the case of small samples.</p>
   </div><!-- /.entry-content -->
 </section>
         <footer id="contentinfo" class="body">
-            <p>© 2022 Bacou</p>
+            <span style="float:left;">© 2022 Balthazar Coutant</span>
+            <span style="float:right"><a href="#index">Back to top</a></span>
         </footer><!-- /#contentinfo -->
 
 </body>
